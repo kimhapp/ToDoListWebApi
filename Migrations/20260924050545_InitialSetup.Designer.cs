@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ToDoListWebApi;
@@ -11,9 +12,11 @@ using ToDoListWebApi;
 namespace ToDoListWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260924050545_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +36,7 @@ namespace ToDoListWebApi.Migrations
                     b.Property<bool>("Complete")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedTimeStamp")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -44,7 +47,7 @@ namespace ToDoListWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedTimeStamp")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
@@ -65,7 +68,7 @@ namespace ToDoListWebApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedTimeStamp")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
@@ -80,7 +83,7 @@ namespace ToDoListWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedTimeStamp")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

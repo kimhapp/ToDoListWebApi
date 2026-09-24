@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoListWebApi.Migrations;
 using ToDoListWebApi.Models;
 
 namespace ToDoListWebApi.Controllers
@@ -9,9 +8,9 @@ namespace ToDoListWebApi.Controllers
     [Route("api/todo")]
     public class ToDoController(ApplicationDbContext context) : ControllerBase
     {
-        private readonly ApplicationDbContext _context = context;
+        readonly ApplicationDbContext _context = context;
 
-            [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<ToDo>>> GetAll()
         {
             return await _context.ToDos.ToListAsync();
