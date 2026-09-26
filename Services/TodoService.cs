@@ -5,7 +5,7 @@ namespace ToDoListWebApi.Services
 {
     public interface IToDoService
     {
-        Task<List<ToDo>> GetAllByUserIdAsync(Guid userId);
+        Task<IEnumerable<ToDo>> GetAllByUserIdAsync(Guid userId);
         Task<ToDo?> GetByIdAsync(Guid id, Guid userId);
         Task<ToDo> CreateAsync(Guid userId, ToDo toDo);
         Task<bool> UpdateAsync(Guid id, Guid userId, ToDo updatedToDo);
@@ -14,7 +14,7 @@ namespace ToDoListWebApi.Services
 
     public class TodoService(ApplicationDbContext context) : IToDoService
     {
-        public async Task<List<ToDo>> GetAllByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<ToDo>> GetAllByUserIdAsync(Guid userId)
         {
             return await context.ToDos.AsNoTracking().Where(t => t.UserId == userId).ToListAsync();
         }

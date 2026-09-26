@@ -1,25 +1,27 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoListWebApi.Models;
+using ToDoListWebApi.Services;
 
 namespace ToDoListWebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/todo")]
-    public class ToDoController(ApplicationDbContext context) : ControllerBase
+    public class ToDoController(IToDoService service) : ControllerBase
     {
-        readonly ApplicationDbContext _context = context;
-
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ToDo>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ToDo>>> GetAllByUserId(Guid userId)
         {
-            return await _context.ToDos.ToListAsync();
+            IEnumerable<ToDo> toDos = await service.GetAllByUserIdAsync(userId);
+            return Ok(toDos);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ToDo>> GetById(int id)
+        public async Task<ActionResult<ToDo>> GetById(Guid id, Guid userId)
         {
-            ToDo? toDo = await _context.ToDos.FindAsync(id);
+            ToDo? toDo = await service.GetByIdAsync(id);
 
             if (toDo == null) return NotFound();
             return toDo;
@@ -28,33 +30,33 @@ namespace ToDoListWebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ToDo>> Create([Bind("Title,Description")] ToDo toDo)
         {
-            _context.ToDos.Add(toDo);
-            await _context.SaveChangesAsync();
+            service.ToDos.Add(toDo);
+            await service.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = toDo.Id}, toDo);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ToDo>> Update(int id, [Bind("Title,Description,Complete")] ToDo toDo)
         {
-            ToDo? existingToDo = await _context.ToDos.FindAsync(id);
+            ToDo? existingToDo = await service.ToDos.FindAsync(id);
             if (existingToDo == null) return NotFound();
 
             existingToDo.Title = toDo.Title;
             existingToDo.Description = toDo.Description;
             existingToDo.Complete = toDo.Complete;
             
-            await _context.SaveChangesAsync();
+            await service.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ToDo>> Delete(int id)
         {
-            ToDo? existingToDo = await _context.ToDos.FindAsync(id);
+            ToDo? existingToDo = await service.ToDos.FindAsync(id);
             if (existingToDo == null) return NotFound();
 
-            _context.ToDos.Remove(existingToDo);
-            await _context.SaveChangesAsync();
+            service.ToDos.Remove(existingToDo);
+            await service.SaveChangesAsync();
             return NoContent();
         }
     }   
