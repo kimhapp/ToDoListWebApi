@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ToDoListWebApi.Dtos;
 using ToDoListWebApi.Models;
 using ToDoListWebApi.Services;
 
@@ -12,10 +13,11 @@ namespace ToDoListWebApi.Controllers
     public class ToDoController(IToDoService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ToDo>>> GetAllByUserId(Guid userId)
+        public async Task<ActionResult<IEnumerable<ToDoDto>>> GetAllByUserId(Guid userId)
         {
             IEnumerable<ToDo> toDos = await service.GetAllByUserIdAsync(userId);
-            return Ok(toDos);
+            
+            return Ok(toDoDtos);
         }
 
         [HttpGet("{id}")]

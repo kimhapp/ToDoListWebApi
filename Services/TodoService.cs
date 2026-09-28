@@ -26,7 +26,6 @@ namespace ToDoListWebApi.Services
 
         public async Task<ToDo> CreateAsync(Guid userId, ToDo toDo)
         {
-            toDo.Id = Guid.NewGuid();
             toDo.UserId = userId;
             toDo.Complete = false;
             toDo.CreatedAt = DateTime.UtcNow;
