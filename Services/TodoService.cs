@@ -5,16 +5,16 @@ namespace ToDoListWebApi.Services
 {
     public interface IToDoService
     {
-        Task<IEnumerable<ToDo>> GetAllByUserIdAsync(Guid userId);
+        Task<List<ToDo>> GetAllByUserIdAsync(Guid userId);
         Task<ToDo?> GetByIdAsync(Guid id, Guid userId);
-        Task<ToDo> CreateAsync(Guid userId, ToDo toDo);
+        Task<ToDo> CreateAsync(Guid userId, string title, string description);
         Task<bool> UpdateAsync(Guid id, Guid userId, ToDo updatedToDo);
         Task<bool> RemoveAsync(Guid id, Guid userId);
     }
 
     public class TodoService(ApplicationDbContext context) : IToDoService
     {
-        public async Task<IEnumerable<ToDo>> GetAllByUserIdAsync(Guid userId)
+        public async Task<List<ToDo>> GetAllByUserIdAsync(Guid userId)
         {
             return await context.ToDos.AsNoTracking().Where(t => t.UserId == userId).ToListAsync();
         }
@@ -24,10 +24,11 @@ namespace ToDoListWebApi.Services
             return await context.ToDos.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
         }
 
-        public async Task<ToDo> CreateAsync(Guid userId, ToDo toDo)
+        public async Task<ToDo> CreateAsync(Guid userId, string title, string description)
         {
+            ToDo toDo = new
             toDo.UserId = userId;
-            toDo.Complete = false;
+                
             toDo.CreatedAt = DateTime.UtcNow;
             toDo.UpdatedAt = DateTime.UtcNow;
 
