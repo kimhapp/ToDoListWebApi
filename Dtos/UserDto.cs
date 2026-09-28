@@ -27,8 +27,8 @@ namespace ToDoListWebApi.Dtos
     public class LoginUserDto
     {
         [Required]
-        [StringLength(20, MinimumLength = 3)]
-        public string Name { get; set; } = "";
+        [EmailAddress]
+        public string Email { get; set; } = "";
 
         [Required]
         [MinLength(8)]

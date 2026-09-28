@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ToDoListWebApi.Models;
 
 namespace ToDoListWebApi.Dtos
 {
@@ -32,5 +33,18 @@ namespace ToDoListWebApi.Dtos
         public string Description { get; set; } = "";
 
         public bool Complete { get; set; } = false;
+    }
+
+    public static class ToDoExtensions
+    {
+        public static ToDoDto ToDto(this ToDo toDo) => new()
+        {
+            Id = toDo.Id,
+            Title = toDo.Title,
+            Description = toDo.Description,
+            Complete = toDo.Complete,
+            CreatedAt = toDo.CreatedAt,
+            UpdatedAt = toDo.UpdatedAt
+        };
     }
 }

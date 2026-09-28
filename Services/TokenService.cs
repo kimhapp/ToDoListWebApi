@@ -6,6 +6,8 @@ using ToDoListWebApi.Models;
 
 namespace ToDoListWebApi.Services
 {
+    // Using TokenService over static method to generate token
+    // As config will be injected through DI instead of passing it every time it is called
     public interface ITokenService
     {
         string GenerateToken(User user);
@@ -15,7 +17,7 @@ namespace ToDoListWebApi.Services
     {
         public string GenerateToken(User user)
         {
-            SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(configuration["JwtKey"]!));
+            SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(configuration["JWTKEY"]!));
 
             SigningCredentials credentials = new(key, SecurityAlgorithms.HmacSha256);
 
@@ -28,7 +30,7 @@ namespace ToDoListWebApi.Services
 
             JwtSecurityToken token = new(
                 issuer: configuration["JWTISSUER"],
-                audience: configuration["JTWAUDIENCE"],
+                audience: configuration["JWTAUDIENCE"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials

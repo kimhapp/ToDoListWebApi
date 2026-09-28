@@ -8,7 +8,7 @@ namespace ToDoListWebApi.Services
         Task<List<ToDo>> GetAllByUserIdAsync(Guid userId);
         Task<ToDo?> GetByIdAsync(Guid id, Guid userId);
         Task<ToDo> CreateAsync(Guid userId, string title, string description);
-        Task<bool> UpdateAsync(Guid id, Guid userId, ToDo updatedToDo);
+        Task<bool> UpdateAsync(Guid id, Guid userId, string title, string description, bool complete);
         Task<bool> RemoveAsync(Guid id, Guid userId);
     }
 
@@ -26,25 +26,29 @@ namespace ToDoListWebApi.Services
 
         public async Task<ToDo> CreateAsync(Guid userId, string title, string description)
         {
-            ToDo toDo = new
-            toDo.UserId = userId;
-                
-            toDo.CreatedAt = DateTime.UtcNow;
-            toDo.UpdatedAt = DateTime.UtcNow;
+            ToDo toDo = new()
+            {
+                UserId = userId,
+                Title = title,
+                Description = description,
+                Complete = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
 
             context.ToDos.Add(toDo);
             await context.SaveChangesAsync();
             return toDo;
         }
 
-        public async Task<bool> UpdateAsync(Guid id, Guid userId, ToDo updatedToDo)
+        public async Task<bool> UpdateAsync(Guid id, Guid userId, string title, string description, bool complete)
         {
             ToDo? toDo = await context.ToDos.FirstOrDefaultAsync(t => t.Id == id && t.UserId == userId);
             if (toDo == null) return false;
 
-            toDo.Title = updatedToDo.Title;
-            toDo.Description = updatedToDo.Description;
-            toDo.Complete = updatedToDo.Complete;
+            toDo.Title = title;
+            toDo.Description = description;
+            toDo.Complete = complete;
             toDo.UpdatedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();

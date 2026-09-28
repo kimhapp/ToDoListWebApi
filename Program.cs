@@ -21,11 +21,12 @@ builder.Services.AddAuthentication().AddJwtBearer(jwtOptions =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTKEY"]!)),
         ValidateLifetime = true,
     };
-
-    jwtOptions.MapInboundClaims = false;
 });
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IToDoService, TodoService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
