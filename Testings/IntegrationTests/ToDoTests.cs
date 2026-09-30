@@ -60,31 +60,24 @@ namespace Testings.IntegrationTests
         public async Task GetAllToDos_DoesNotReturnOtherUsers()
         {
             // Arrange
-            string TitleA = "A's ToDo";
-            string TitleB = "B's ToDo";
             HttpClient userA = await RegisteredUser();
             await userA.PostAsJsonAsync(toDoRoute, new
             {
-                Title = TitleA,
+                Title = title,
                 Description = ""
             });
 
             HttpClient userB = await RegisteredUser();
-            await userB.PostAsJsonAsync(toDoRoute, new
-            {
-                Title = TitleB,
-                Description = ""
-            });
 
             // Act
-            HttpResponseMessage response = await userA.GetAsync(toDoRoute);
+            HttpResponseMessage response = await userB.GetAsync(toDoRoute);
 
             // Assert
             response.EnsureSuccessStatusCode();
 
             List<ToDoDto>? toDoDtos = await response.Content.ReadFromJsonAsync<List<ToDoDto>>();
             Assert.NotNull(toDoDtos);
-            Assert.Equal(TitleA, toDoDtos[0]!.Title);
+            Assert.Empty(toDoDtos);
         }
 
         [Fact]
@@ -226,13 +219,166 @@ namespace Testings.IntegrationTests
 
         #region PUT /api/todo/{id}
 
-        
+        [Fact]
+        public async Task UpdateToDo_ByIdAndUserId_ReturnsNoContent()
+        {
+            // Arrange
+            string updatedTitle = "UpdatedTitle";
+            HttpClient user = await RegisteredUser();
+            HttpResponseMessage toDoResponse = await user.PostAsJsonAsync(toDoRoute, new
+            {
+                Title = title,
+                Description = ""
+            });
+
+            Guid id = (await toDoResponse.Content.ReadFromJsonAsync<ToDoDto>())!.Id;
+
+            // Act
+            HttpResponseMessage response = await user.PutAsJsonAsync($"{toDoRoute}/{id}", new
+            {
+                Title = updatedTitle,
+                Description = "",
+                Complete = true
+            });
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateToDo_WithNonExistentId_ReturnsNotFound()
+        {
+            // Arrange
+            string updatedTitle = "UpdatedTitle";
+            HttpClient user = await RegisteredUser();
+
+            Guid id = Guid.NewGuid();
+
+            // Act
+            HttpResponseMessage response = await user.PutAsJsonAsync($"{toDoRoute}/{id}", new
+            {
+                Title = updatedTitle,
+                Description = "",
+                Complete = true
+            });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateToDo_WithMissingTitle_ReturnsBadRequest()
+        {
+            // Arrange
+            string updatedTitle = "";
+            HttpClient user = await RegisteredUser();
+            HttpResponseMessage toDoResponse = await user.PostAsJsonAsync(toDoRoute, new
+            {
+                Title = title,
+                Description = ""
+            });
+
+            Guid id = (await toDoResponse.Content.ReadFromJsonAsync<ToDoDto>())!.Id;
+
+            // Act
+            HttpResponseMessage response = await user.PutAsJsonAsync($"{toDoRoute}/{id}", new
+            {
+                Title = updatedTitle,
+                Description = "",
+                Complete = false
+            });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateToDo_ByIdAndOtherUserId_ReturnsNotFound()
+        {
+            // Arrange
+            string updatedTitle = "UpdatedTitle";
+            HttpClient userA = await RegisteredUser();
+            HttpResponseMessage toDoResponse = await userA.PostAsJsonAsync(toDoRoute, new
+            {
+                Title = title,
+                Description = "",
+            });
+
+            Guid id = (await toDoResponse.Content.ReadFromJsonAsync<ToDoDto>())!.Id;
+            HttpClient userB = await RegisteredUser();
+
+            // Act
+            HttpResponseMessage response = await userB.PutAsJsonAsync($"{toDoRoute}/{id}", new
+            {
+                Title = updatedTitle,
+                Description = "",
+                Complete = false
+            });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
 
         #endregion
 
         #region DELETE /api/todo/{id}
 
-        
+        [Fact]
+        public async Task DeleteToDo_ByIdAndUserId_ReturnsNoContent()
+        {
+            // Arrange
+            HttpClient user = await RegisteredUser();
+            HttpResponseMessage toDoResponse = await user.PostAsJsonAsync(toDoRoute, new
+            {
+                Title = title,
+                Description = ""
+            });
+
+            Guid id = (await toDoResponse.Content.ReadFromJsonAsync<ToDoDto>())!.Id;
+
+            // Act
+            HttpResponseMessage response = await user.DeleteAsync($"{toDoRoute}/{id}");
+
+            // Assert 
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteToDo_WithNonExitstentId_ReturnsNotFound()
+        {
+            // Arrange
+            HttpClient user = await RegisteredUser();
+            Guid id = Guid.NewGuid();
+
+            // Act
+            HttpResponseMessage response = await user.DeleteAsync($"{toDoRoute}/{id}");
+
+            // Assert 
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteToDo_ByIdAndOtherUserId_ReturnsNotFound()
+        {
+            // Arrange
+            HttpClient userA = await RegisteredUser();
+            HttpResponseMessage toDoResponse = await userA.PostAsJsonAsync(toDoRoute, new
+            {
+                Title = title,
+                Description = "",
+            });
+
+            Guid id = (await toDoResponse.Content.ReadFromJsonAsync<ToDoDto>())!.Id;
+            HttpClient userB = await RegisteredUser();
+
+            // Act
+            HttpResponseMessage response = await userB.DeleteAsync($"{toDoRoute}/{id}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
 
         #endregion
     }
