@@ -33,11 +33,6 @@ namespace Testings
                     DbConnection connection = container.GetRequiredService<DbConnection>();
                     options.UseSqlite(connection);
                 });
-
-                ServiceProvider serviceProvider = services.BuildServiceProvider();
-                IServiceScope scope = serviceProvider.CreateScope();
-                DbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.EnsureCreated();
             });
 
             builder.UseEnvironment("Development");
