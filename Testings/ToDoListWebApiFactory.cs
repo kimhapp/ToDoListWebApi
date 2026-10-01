@@ -17,10 +17,10 @@ namespace Testings
         {
             builder.ConfigureTestServices(services =>
             {
-                services?.RemoveAll(typeof(IDbContextOptionsConfiguration<ApplicationDbContext>));
-                services?.RemoveAll(typeof(DbConnection));
+                services.RemoveAll<IDbContextOptionsConfiguration<ApplicationDbContext>>();
+                services.RemoveAll<DbConnection>();
 
-                services?.AddSingleton<DbConnection>(container =>
+                services.AddSingleton<DbConnection>(container =>
                 {
                     SqliteConnection connection = new("DataSource=:memory");
                     connection.Open();
@@ -28,13 +28,13 @@ namespace Testings
                     return connection;
                 });
 
-                services?.AddDbContext<ApplicationDbContext>((container, options) =>
+                services.AddDbContext<ApplicationDbContext>((container, options) =>
                 {
                     DbConnection connection = container.GetRequiredService<DbConnection>();
                     options.UseSqlite(connection);
                 });
 
-                ServiceProvider serviceProvider = services!.BuildServiceProvider();
+                ServiceProvider serviceProvider = services.BuildServiceProvider();
                 IServiceScope scope = serviceProvider.CreateScope();
                 DbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 dbContext.Database.EnsureCreated();
