@@ -20,10 +20,10 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Install dependencies
-      run: dotnet restore Testings/Testing.csproj
+      run: dotnet restore Testings/Testings.csproj
       
     - name: Build
-      run: dotnet build Testings/Testing.csproj --configuration Release --no-restore
+      run: dotnet build Testings/Testings.csproj --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test Testings/Testing.csproj --no-restore --verbosity normal
+      run: dotnet test Testings/Testings.csproj --no-restore --verbosity normal
