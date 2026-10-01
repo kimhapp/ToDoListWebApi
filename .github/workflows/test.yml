@@ -21,9 +21,6 @@ jobs:
 
     - name: Install dependencies
       run: dotnet restore Testings/Testings.csproj
-      
-    - name: Build
-      run: dotnet build Testings/Testings.csproj --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test Testings/Testings.csproj --no-restore --verbosity detailed
+      run: dotnet test Testings/Testings.csproj --verbosity detailed
