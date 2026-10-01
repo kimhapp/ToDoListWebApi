@@ -1,4 +1,4 @@
-** Link of the Api: https://todolistwebapi.onrender.com/ **
+**Link of the Api: https://todolistwebapi.onrender.com/**
 *(Bare url won't work, try adding endpoints like /api/auth/register or as listed below)*
 
 ## ToDoListWebApi

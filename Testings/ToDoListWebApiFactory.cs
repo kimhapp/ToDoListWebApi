@@ -27,7 +27,7 @@ namespace Testings
         public new async Task DisposeAsync()
         {
             await container.DisposeAsync();
-            await base.DisposeAsync();
+            await base.DisposeAsync(); // Must be called as new hides the base method otherwise test host will leak
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)

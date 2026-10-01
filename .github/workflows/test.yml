@@ -8,6 +8,8 @@ on:
     - '**.cs'
     - '**.csproj'
 
+# These are essential so program.cs won't throw on
+# null config. These are for CI test purposes.
 env:
   JWTKEY: "dummy-test-key-for-github-testing"
   JWTISSUER: "dummy"
