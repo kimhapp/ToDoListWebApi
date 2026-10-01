@@ -13,14 +13,6 @@ namespace Testings
 {
     public class ToDoListWebApiFactory : WebApplicationFactory<Program>
     {
-        public ToDoListWebApiFactory()
-        {
-            IServiceProvider provider = Services;
-            using IServiceScope scope = provider.CreateScope();
-            DbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.EnsureCreated();
-        }
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(services =>
@@ -41,6 +33,11 @@ namespace Testings
                     DbConnection connection = container.GetRequiredService<DbConnection>();
                     options.UseSqlite(connection);
                 });
+
+                ServiceProvider serviceProvider = services.BuildServiceProvider();
+                IServiceScope scope = serviceProvider.CreateScope();
+                DbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.EnsureCreated();
             });
 
             builder.UseEnvironment("Development");
