@@ -24,6 +24,9 @@ jobs:
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
+    
+    - name: Restore
+      run: dotnet restore Testings/Testings.csproj
 
     - name: Build
       run: dotnet build Testings/Testings.csproj --configuration Release --no-restore
